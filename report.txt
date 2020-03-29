@@ -1,0 +1,23 @@
+Daniel Schultz
+
+Report for the antsonring homework assignment 7, PHYS 1610
+
+By doing a bit of testing, I foudn that one needs around 10000 walkers in order to qualitatively reproduce the finite difference calculation.
+
+void diffring_timestep(const rmatrix<double>& F, rvector<double>& P)
+
+In this function, I employed a forward Euler scheme by using a matrix-vector multiplication from cblas. The scheme is of the form
+
+$$P_{n+1} = (1 + F)P_n$$
+
+where $F$ is a Laplacian matrix, also containing the heat conduction coefficient D. 
+
+
+void diffring_fill_timestep_matrix(rmatrix<double>& F, double D, double dt, double dx)
+
+In this function, I populated the Laplacian matrix with a central band for the second derivative finite differences, and then a couple corner points in order to implement the periodic boundary conditions.
+
+
+void walkring_timestep(rvector<int>& walkerpositions, int N, double prob)
+
+In this function, I generated a random number r for each walker and each timestep, and then depending on if this random number falls in the interval [0,prob), [prob, 1-prob], or (1-prob,1], I move the ants to the left or the right or statinoary. I add to the ants position modulo N in order to keep the periodic boundary condition. Note that I add N-1 modulo N, and this is equivalent to subtracting 1, but ensures that we do not go negative.
